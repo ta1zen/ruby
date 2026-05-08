@@ -1,0 +1,29 @@
+---
+1:
+  :title: Розробка сайту
+  :team:
+  - Іван Петренко
+  - Марія Коваль
+  :tags:
+  - Web
+  - Ruby
+  - Rails
+  :client: ТОВ Ромашка
+  :start_date: '2024-03-01'
+  :deadline: '2024-06-01'
+  :budget: 55000.0
+  :status: completed
+3:
+  :title: Корпоративний портал
+  :team:
+  - Іван Петренко
+  - Тетяна Бондар
+  :tags:
+  - Web
+  - Rails
+  - Corporate
+  :client: АТ Банк
+  :start_date: '2024-05-01'
+  :deadline: '2024-12-01'
+  :budget: 120000.0
+  :status: planned
