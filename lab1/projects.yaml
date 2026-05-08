@@ -26,14 +26,4 @@
   :start_date: '2024-05-01'
   :deadline: '2024-12-01'
   :budget: 120000.0
-  :status: in_progress
-4: !ruby/object:Project
-  title: Test
-  team:
-  - Team1
-  tags: []
-  client: Client
-  start_date: '2026-04-10'
-  deadline: '2026-04-12'
-  budget: 5000.0
-  status: planned
+  :status: planned
