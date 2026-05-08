@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  category: MyString
+  main_tag: MyString
+  client: MyString
+  start_date: 2026-05-08
+  deadline: 2026-05-08
+  budget: 1.5
+  status: 1
+
+two:
+  title: MyString
+  category: MyString
+  main_tag: MyString
+  client: MyString
+  start_date: 2026-05-08
+  deadline: 2026-05-08
+  budget: 1.5
+  status: 1
