@@ -1,0 +1,44 @@
+<h1>Усі проєкти</h1>
+
+<p>
+  <%= link_to '+ Новий проєкт', new_project_path %>
+  &nbsp;|&nbsp;
+  <%= link_to 'Активні (in_progress)', in_progress_projects_path %>
+</p>
+
+<% if notice.present? %>
+  <p style="color:green"><%= notice %></p>
+<% end %>
+
+<% if @projects.any? %>
+  <table border="1" cellpadding="6">
+    <thead>
+      <tr>
+        <th>ID</th><th>Назва</th><th>Клієнт</th><th>Категорія</th>
+        <th>Дедлайн</th><th>Бюджет</th><th>Статус</th><th>Дії</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @projects.each do |project| %>
+        <tr>
+          <td><%= project.id %></td>
+          <td><%= project.title %></td>
+          <td><%= project.client %></td>
+          <td><%= project.category %></td>
+          <td><%= project.deadline %></td>
+          <td><%= number_to_currency(project.budget, unit: 'грн', format: '%n %u') %></td>
+          <td><%= project.status %></td>
+          <td>
+            <%= link_to 'Переглянути', project %> |
+            <%= link_to 'Редагувати', edit_project_path(project) %> |
+            <%= button_to 'Видалити', project, method: :delete,
+                          data: { turbo_confirm: 'Видалити проєкт?' },
+                          style: 'display:inline' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>Проєктів ще немає. <%= link_to 'Додати перший', new_project_path %>.</p>
+<% end %>

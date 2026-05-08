@@ -1,0 +1,31 @@
+<h1>Активні проєкти (in_progress)</h1>
+
+<p><%= link_to '← Всі проєкти', projects_path %></p>
+
+<% if @projects.any? %>
+  <table border="1" cellpadding="6">
+    <thead>
+      <tr>
+        <th>Назва</th><th>Клієнт</th><th>Категорія</th>
+        <th>Дедлайн</th><th>Бюджет</th><th>Дії</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @projects.each do |project| %>
+        <tr>
+          <td><%= project.title %></td>
+          <td><%= project.client %></td>
+          <td><%= project.category %></td>
+          <td><%= project.deadline %></td>
+          <td><%= number_to_currency(project.budget, unit: 'грн', format: '%n %u') %></td>
+          <td>
+            <%= link_to 'Переглянути', project %> |
+            <%= link_to 'Редагувати', edit_project_path(project) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>Наразі немає активних проєктів.</p>
+<% end %>

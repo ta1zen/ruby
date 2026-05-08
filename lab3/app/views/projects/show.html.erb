@@ -1,0 +1,20 @@
+<% if notice.present? %>
+  <p style="color:green"><%= notice %></p>
+<% end %>
+
+<h1><%= @project.title %></h1>
+
+<dl>
+  <dt>Клієнт</dt>    <dd><%= @project.client %></dd>
+  <dt>Категорія</dt> <dd><%= @project.category %></dd>
+  <dt>Тег</dt>       <dd><%= @project.main_tag %></dd>
+  <dt>Початок</dt>   <dd><%= @project.start_date %></dd>
+  <dt>Дедлайн</dt>   <dd><%= @project.deadline %></dd>
+  <dt>Бюджет</dt>    <dd><%= number_to_currency(@project.budget, unit: 'грн', format: '%n %u') %></dd>
+  <dt>Статус</dt>    <dd><%= @project.status %></dd>
+</dl>
+
+<p>
+  <%= link_to 'Редагувати', edit_project_path(@project) %> |
+  <%= link_to 'До списку', projects_path %>
+</p>

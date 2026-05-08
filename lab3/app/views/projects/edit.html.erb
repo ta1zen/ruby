@@ -1,0 +1,6 @@
+<h1>Редагувати: <%= @project.title %></h1>
+<%= render 'form', project: @project %>
+<p>
+  <%= link_to 'Переглянути', @project %> |
+  <%= link_to 'Скасувати', projects_path %>
+</p>

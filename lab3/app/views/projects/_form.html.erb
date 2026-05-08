@@ -1,0 +1,57 @@
+<%= form_with(model: project) do |f| %>
+  <% if project.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= project.errors.count %> помилок завадили зберегти проєкт:</h2>
+      <ul>
+        <% project.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :title, 'Назва' %>
+    <%= f.text_field :title %>
+  </div>
+
+  <div class="field">
+    <%= f.label :category, 'Категорія' %>
+    <%= f.select :category, Category.pluck(:name), { include_blank: '— Оберіть категорію —' } %>
+  </div>
+
+  <div class="field">
+    <%= f.label :main_tag, 'Основний тег' %>
+    <%= f.text_field :main_tag %>
+  </div>
+
+  <div class="field">
+    <%= f.label :client, 'Клієнт' %>
+    <%= f.text_field :client %>
+  </div>
+
+  <div class="field">
+    <%= f.label :start_date, 'Дата початку' %>
+    <%= f.date_field :start_date %>
+  </div>
+
+  <div class="field">
+    <%= f.label :deadline, 'Дедлайн' %>
+    <%= f.date_field :deadline %>
+  </div>
+
+  <div class="field">
+    <%= f.label :budget, 'Бюджет (грн)' %>
+    <%= f.number_field :budget, step: 0.01, min: 0 %>
+  </div>
+
+  <div class="field">
+    <%= f.label :status, 'Статус' %>
+    <%# Enum-ключі з моделі %>
+    <%= f.select :status, Project.statuses.keys %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
