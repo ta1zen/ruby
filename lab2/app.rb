@@ -64,7 +64,6 @@ class App
     print "Оберіть дію: "
   end
 
-  # ── Допоміжні методи ────────────────────────────────────────────────────────
 
   def ask(prompt)
     print prompt
@@ -84,7 +83,6 @@ class App
     end
   end
 
-  # ── Дії меню ────────────────────────────────────────────────────────────────
 
   def list_projects
     if @manager.collection.empty?
