@@ -1,0 +1,32 @@
+<h1 class="mb-3">Дедлайн протягом 7 днів</h1>
+
+<% if @projects.any? %>
+  <table class="table table-striped table-hover align-middle">
+    <thead class="table-dark">
+      <tr>
+        <th>Назва</th>
+        <th>Клієнт</th>
+        <th>Дедлайн</th>
+        <th>Статус</th>
+        <th>Дії</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @projects.each do |project| %>
+        <tr>
+          <td><%= link_to project.title, project %></td>
+          <td><%= project.client %></td>
+          <td><%= deadline_badge(project) %></td>
+          <td><%= status_badge(project) %></td>
+          <td>
+            <%= link_to 'Переглянути', project, class: 'btn btn-sm btn-outline-primary' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alert alert-info">Немає проєктів із дедлайном у найближчі 7 днів.</div>
+<% end %>
+
+<p><%= link_to '← Всі проєкти', projects_path, class: 'btn btn-link' %></p>

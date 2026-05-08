@@ -1,0 +1,9 @@
+/log/*.log
+/tmp/
+/storage/
+*.sqlite3
+*.sqlite3-journal
+/public/assets
+/node_modules
+.byebug_history
+.env
