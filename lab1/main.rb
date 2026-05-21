@@ -1,4 +1,3 @@
-
 require_relative 'project_manager'
 
 projects = {}
@@ -7,7 +6,7 @@ puts '=' * 55
 puts '  ДОДАВАННЯ ПРОЄКТІВ'
 puts '=' * 55
 
-add_project(projects,
+ProjectManager.add_project(projects,
   title:      'Розробка сайту',
   team:       ['Іван Петренко', 'Марія Коваль'],
   tags:       ['Web', 'Ruby', 'Rails'],
@@ -18,7 +17,7 @@ add_project(projects,
   status:     'in_progress'
 )
 
-add_project(projects,
+ProjectManager.add_project(projects,
   title:      'Мобільний додаток',
   team:       ['Олег Сидоренко'],
   tags:       ['Mobile', 'React Native'],
@@ -29,7 +28,7 @@ add_project(projects,
   status:     'planned'
 )
 
-add_project(projects,
+ProjectManager.add_project(projects,
   title:      'Корпоративний портал',
   team:       ['Іван Петренко', 'Тетяна Бондар'],
   tags:       ['Web', 'Rails', 'Corporate'],
@@ -43,58 +42,59 @@ add_project(projects,
 puts "\n#{'=' * 55}"
 puts '  УСІ ПРОЄКТИ'
 puts '=' * 55
-list_projects(projects)
+ProjectManager.list_projects(projects)
 
 puts '=' * 55
 puts "  ПОШУК за назвою 'сайт'"
 puts '=' * 55
-find_by_title(projects, 'сайт')
+ProjectManager.find_by_title(projects, 'сайт')
 
 puts '=' * 55
 puts "  ФІЛЬТР за статусом 'planned'"
 puts '=' * 55
-filter_by_status(projects, 'planned')
+ProjectManager.filter_by_status(projects, 'planned')
 
 puts '=' * 55
 puts "  ФІЛЬТР за тегом 'Rails'"
 puts '=' * 55
-filter_by_tag(projects, 'Rails')
+ProjectManager.filter_by_tag(projects, 'Rails')
 
 puts '=' * 55
 puts '  РЕДАГУВАННЯ проєкту ID=1'
 puts '=' * 55
-edit_project(projects, 1, status: 'completed', budget: 55_000.00)
-list_projects(projects)
+ProjectManager.edit_project(projects, 1, status: 'completed', budget: 55_000.00)
+ProjectManager.list_projects(projects)
 
 puts '=' * 55
 puts '  ВИДАЛЕННЯ проєкту ID=2'
 puts '=' * 55
-delete_project(projects, 2)
-list_projects(projects)
+ProjectManager.delete_project(projects, 2)
+ProjectManager.list_projects(projects)
 
 puts '=' * 55
 puts '  ЗБЕРЕЖЕННЯ ТА ЗАВАНТАЖЕННЯ'
 puts '=' * 55
-save_to_json(projects, 'projects.json')
-save_to_yaml(projects, 'projects.yaml')
+ProjectManager.save_to_json(projects, 'projects.json')
+ProjectManager.save_to_yaml(projects, 'projects.yaml')
 
-projects_json = load_from_json('projects.json')
+projects_json = ProjectManager.load_from_json('projects.json')
 puts "\n--- Після завантаження з JSON ---"
-list_projects(projects_json)
+ProjectManager.list_projects(projects_json)
 
-projects_yaml = load_from_yaml('projects.yaml')
+projects_yaml = ProjectManager.load_from_yaml('projects.yaml')
 puts "\n--- Після завантаження з YAML ---"
-list_projects(projects_yaml)
+ProjectManager.list_projects(projects_yaml)
 
 puts '=' * 55
 puts '  ОБРОБКА ПОМИЛОК'
 puts '=' * 55
 
-delete_project(projects, 999)
-edit_project(projects, 999, status: 'completed')
-load_from_json('non_existent.json')
-load_from_yaml('non_existent.yaml')
-add_project(projects,
+ProjectManager.delete_project(projects, 999)
+ProjectManager.edit_project(projects, 999, status: 'completed')
+ProjectManager.load_from_json('non_existent.json')
+ProjectManager.load_from_yaml('non_existent.yaml')
+
+ProjectManager.add_project(projects,
   title: 'Тест', team: [], tags: [], client: 'X',
   start_date: '2024-01-01', deadline: '2024-12-31',
   budget: 0, status: 'wrong_status'
