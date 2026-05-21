@@ -1,7 +1,6 @@
 Rails.application.routes.draw do
   resources :categories
 
-  # Кастомний маршрут — активні проєкти; визначаємо ДО resources щоб не конфліктував з :id
   get 'projects/in_progress', to: 'projects#in_progress', as: :in_progress_projects
   resources :projects
 
