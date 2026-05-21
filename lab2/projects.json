@@ -2,34 +2,28 @@
   "1": {
     "title": "Розробка сайту",
     "team": [
-      "Іван Петренко",
-      "Марія Коваль"
+      "Іван Петренко"
     ],
     "tags": [
-      "Web",
-      "Ruby",
-      "Rails"
+      "Web"
     ],
     "client": "ТОВ Ромашка",
-    "start_date": "2024-03-01",
-    "deadline": "2024-06-01",
+    "start_date": "2024-01-01",
+    "deadline": "2024-12-31",
     "budget": 55000.0,
-    "status": "completed"
+    "status": "in_progress"
   },
-  "3": {
+  "2": {
     "title": "Корпоративний портал",
     "team": [
-      "Іван Петренко",
-      "Тетяна Бондар"
+      "Іван Петренко"
     ],
     "tags": [
-      "Web",
-      "Rails",
-      "Corporate"
+      "Web"
     ],
     "client": "АТ Банк",
-    "start_date": "2024-05-01",
-    "deadline": "2024-12-01",
+    "start_date": "2024-01-01",
+    "deadline": "2024-12-31",
     "budget": 120000.0,
     "status": "planned"
   }

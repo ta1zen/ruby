@@ -1,26 +1,34 @@
-require 'yaml'
 require 'json'
+require 'yaml'
 require_relative 'project'
 
 class ProjectManager
-  attr_reader :collection
-
   def initialize
     @collection = {}
-    @next_id = 1
   end
 
   def add_project(project)
-    @collection[@next_id] = project
-    @next_id += 1
+    id = (@collection.keys.max || 0) + 1
+    @collection[id] = project
+    id
   end
 
-  def get_project(id)
-    @collection[id]
+  def edit_project(id, new_data)
+    project = @collection[id]
+    return false unless project
+
+    new_data.each do |key, value|
+      project.send("#{key}=", value) if project.respond_to?("#{key}=")
+    end
+    true
   end
 
   def delete_project(id)
     @collection.delete(id)
+  end
+
+  def list_projects
+    @collection
   end
 
   def find_by_title(query)
@@ -32,37 +40,36 @@ class ProjectManager
   end
 
   def filter_by_tag(tag)
-    @collection.select { |_, p| p.tags.any? { |t| t.downcase == tag.downcase } }
+    @collection.select { |_, p| p.tags.include?(tag) }
   end
 
-  def save_to_yaml(filename = 'projects.yml')
+  def save_to_yaml(filename)
     File.write(filename, YAML.dump(@collection))
   end
 
-  def load_from_yaml(filename = 'projects.yml')
+  def load_from_yaml(filename)
     return false unless File.exist?(filename)
-
-    @collection = YAML.load_file(filename) || {}
-    update_next_id
+    
+    @collection = YAML.unsafe_load(File.read(filename)) || {}
     true
+  rescue StandardError => e
+    puts "Помилка YAML: #{e.message}"
+    false
   end
 
-  def save_to_json(filename = 'projects.json')
-    File.write(filename, JSON.pretty_generate(@collection.transform_values(&:to_h)))
+  def save_to_json(filename)
+    hash_collection = @collection.transform_values(&:to_h)
+    File.write(filename, JSON.pretty_generate(hash_collection))
   end
 
-  def load_from_json(filename = 'projects.json')
+  def load_from_json(filename)
     return false unless File.exist?(filename)
-
-    json_data = JSON.parse(File.read(filename))
-    @collection = json_data.to_h { |id, h| [id.to_i, Project.from_h(h)] }
-    update_next_id
+    
+    raw = JSON.parse(File.read(filename), symbolize_names: true)
+    
+    @collection = raw.transform_keys(&:to_s).transform_keys(&:to_i).transform_values do |project_hash|
+      Project.from_h(project_hash)
+    end
     true
-  end
-
-  private
-
-  def update_next_id
-    @next_id = (@collection.keys.max || 0) + 1
   end
 end

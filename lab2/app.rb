@@ -1,190 +1,179 @@
+require_relative 'project'
 require_relative 'project_manager'
 
 class App
-  VALID_STATUSES = %w[planned in_progress completed cancelled].freeze
+  YAML_FILE = 'projects.yaml'
+  JSON_FILE = 'projects.json'
 
   def initialize
     @manager = ProjectManager.new
-    load_data
+    load_initial_data
   end
 
   def run
     loop do
       print_menu
-      choice = gets.chomp
+      print "Ваш вибір: "
+      choice = gets.chomp.to_i
 
-      case choice
-      when '1' then list_projects
-      when '2' then create_project
-      when '3' then edit_project
-      when '4' then delete_project
-      when '5' then find_by_title
-      when '6' then filter_by_status
-      when '7' then filter_by_tag
-      when '8' then save_to_json_explicit
-      when '9' then load_from_json_explicit
-      when '0'
-        puts "Завершення роботи..."
-        break
-      else
-        puts "Невірний вибір. Будь ласка, спробуйте ще раз."
-      end
+      break if choice == 0
+
+      handle_choice(choice)
     end
-  rescue Interrupt
-    puts "\nЕкстрене завершення..."
   ensure
-    @manager.save_to_yaml
-    puts "Дані автозбережено у projects.yml."
+    @manager.save_to_yaml(YAML_FILE)
+    puts "\n[Система] Дані автоматично збережено у #{YAML_FILE} перед виходом."
   end
 
   private
 
-  def load_data
-    if @manager.load_from_yaml
-      puts "Дані завантажено з projects.yml."
-    elsif @manager.load_from_json
-      puts "Дані завантажено з projects.json."
+  def load_initial_data
+    if @manager.load_from_yaml(YAML_FILE)
+      puts "[Система] Дані успішно завантажено з #{YAML_FILE}"
+    elsif @manager.load_from_json(JSON_FILE)
+      puts "[Система] Дані успішно завантажено з #{JSON_FILE}"
     else
-      puts "Файли даних не знайдені. Створено нову порожню базу."
+      puts "[Система] Файли не знайдено. Створено нову порожню колекцію."
     end
   end
 
   def print_menu
-    puts "\n--- МЕНЕДЖЕР ПРОЄКТІВ ---"
-    puts "1. Список усіх проєктів"
-    puts "2. Додати новий проєкт"
-    puts "3. Редагувати проєкт"
+    puts "\n" + "="*35
+    puts "      МЕНЕДЖЕР ПРОЄКТІВ"
+    puts "="*35
+    puts "1. Додати проєкт"
+    puts "2. Показати всі проєкти"
+    puts "3. Знайти за назвою"
     puts "4. Видалити проєкт"
-    puts "5. Пошук за назвою"
-    puts "6. Фільтр за статусом"
-    puts "7. Фільтр за тегом"
-    puts "8. Зберегти вручну в JSON"
-    puts "9. Завантажити з JSON"
-    puts "0. Вийти"
-    print "Оберіть дію: "
+    puts "5. Редагувати проєкт"
+    puts "6. Експорт у JSON"
+    puts "0. Вихід"
+    puts "="*35
   end
 
-
-  def ask(prompt)
-    print prompt
-    gets.chomp.strip
-  end
-
-  def split_list(str)
-    str.split(',').map(&:strip).reject(&:empty?)
-  end
-
-  def print_results(results, label)
-    if results.empty?
-      puts "Проєктів #{label} не знайдено."
+  def handle_choice(choice)
+    case choice
+    when 1
+      add_project_dialog
+    when 2
+      display_projects(@manager.list_projects)
+    when 3
+      print "Введіть частину назви: "
+      query = gets.chomp
+      display_projects(@manager.find_by_title(query))
+    when 4
+      print "Введіть ID для видалення: "
+      id = gets.chomp.to_i
+      if @manager.delete_project(id)
+        puts "Проєкт видалено."
+      else
+        puts "Проєкт з таким ID не знайдено."
+      end
+    when 5
+      edit_project_dialog
+    when 6
+      @manager.save_to_json(JSON_FILE)
+      puts "Дані успішно експортовано у #{JSON_FILE}."
     else
-      puts "Знайдено #{results.size} проєкт(ів) #{label}:"
-      results.each { |id, project| puts "[#{id}] #{project}" }
+      puts "Невідома команда, спробуйте ще раз."
     end
   end
 
-
-  def list_projects
-    if @manager.collection.empty?
-      puts "Список проєктів порожній."
+  def display_projects(collection)
+    if collection.empty?
+      puts "Проєктів не знайдено."
     else
-      @manager.collection.each { |id, project| puts "[#{id}] #{project}" }
+      collection.each { |id, project| puts "[#{id}] #{project.to_s}" }
     end
   end
 
-  def create_project
-    title      = ask("Назва: ")
-    team       = split_list(ask("Команда (через кому): "))
-    tags       = split_list(ask("Теги (через кому): "))
-    client     = ask("Клієнт: ")
-    start_date = ask("Дата початку (YYYY-MM-DD): ")
-    deadline   = ask("Дедлайн (YYYY-MM-DD): ")
-    budget     = ask("Бюджет: ").to_f
-    status     = ask("Статус (#{VALID_STATUSES.join('/')}): ")
-    status     = 'planned' unless VALID_STATUSES.include?(status)
-
-    @manager.add_project(Project.new(title, team, tags, client, start_date, deadline, budget, status))
-    puts "Проєкт успішно додано!"
-  rescue StandardError => e
-    puts "Помилка при створенні: #{e.message}"
+  def add_project_dialog
+    puts "\n--- Додавання нового проєкту ---"
+    
+    print "Назва: "
+    title = gets.chomp
+    
+    print "Команда (введіть через кому, напр. Іван, Марія): "
+    team = gets.chomp.split(',').map(&:strip)
+    
+    print "Теги (введіть через кому, напр. Web, Ruby): "
+    tags = gets.chomp.split(',').map(&:strip)
+    
+    print "Клієнт: "
+    client = gets.chomp
+    
+    print "Дата початку (у форматі YYYY-MM-DD): "
+    start_date = gets.chomp
+    
+    print "Дедлайн (у форматі YYYY-MM-DD): "
+    deadline = gets.chomp
+    
+    print "Бюджет: "
+    budget = gets.chomp.to_f
+    
+    print "Статус (planned, in_progress, completed, cancelled) [залишити порожнім для planned]: "
+    status_input = gets.chomp
+    status = status_input.empty? ? "planned" : status_input
+    
+    project = Project.new(title, team, tags, client, start_date, deadline, budget, status)
+    
+    id = @manager.add_project(project)
+    puts "Проєкт '#{title}' успішно додано (ID: #{id})."
   end
 
-  def edit_project
-    id      = ask("ID проєкту для редагування: ").to_i
-    project = @manager.get_project(id)
-
-    if project.nil?
-      puts "Проєкт з ID #{id} не знайдено."
+  def edit_project_dialog
+    print "Введіть ID проєкту для редагування: "
+    id = gets.chomp.to_i
+    
+    projects = @manager.list_projects
+    unless projects.key?(id)
+      puts "Проєкт з таким ID не знайдено."
       return
     end
 
-    puts "Редагуємо: #{project}"
-    puts "(Залиште поле порожнім — не змінювати)"
+    project = projects[id]
+    puts "\n--- Редагування: #{project.title} ---"
+    puts "(Натисніть Enter, якщо не хочете змінювати поле)"
+    
+    new_data = {}
 
-    val = ask("Нова назва: ")
-    project.title = val unless val.empty?
+    print "Нова назва [зараз: #{project.title}]: "
+    val = gets.chomp
+    new_data[:title] = val unless val.empty?
 
-    val = ask("Новий клієнт: ")
-    project.client = val unless val.empty?
+    print "Нова команда (через кому) [зараз: #{project.team.join(', ')}]: "
+    val = gets.chomp
+    new_data[:team] = val.split(',').map(&:strip) unless val.empty?
+    
+    print "Нові теги (через кому) [зараз: #{project.tags.join(', ')}]: "
+    val = gets.chomp
+    new_data[:tags] = val.split(',').map(&:strip) unless val.empty?
 
-    val = ask("Новий статус (#{VALID_STATUSES.join('/')}): ")
-    project.status = val if VALID_STATUSES.include?(val)
+    print "Новий клієнт [зараз: #{project.client}]: "
+    val = gets.chomp
+    new_data[:client] = val unless val.empty?
+    
+    print "Нова дата початку [зараз: #{project.start_date}]: "
+    val = gets.chomp
+    new_data[:start_date] = val unless val.empty?
 
-    val = ask("Новий бюджет: ")
-    project.budget = val.to_f unless val.empty?
+    print "Новий дедлайн [зараз: #{project.deadline}]: "
+    val = gets.chomp
+    new_data[:deadline] = val unless val.empty?
 
-    val = ask("Нова команда (через кому): ")
-    project.team = split_list(val) unless val.empty?
+    print "Новий статус (planned, in_progress, completed, cancelled) [зараз: #{project.status}]: "
+    val = gets.chomp
+    new_data[:status] = val unless val.empty?
 
-    val = ask("Нові теги (через кому): ")
-    project.tags = split_list(val) unless val.empty?
+    print "Новий бюджет [зараз: #{project.budget}]: "
+    val = gets.chomp
+    new_data[:budget] = val.to_f unless val.empty?
 
-    val = ask("Новий дедлайн (YYYY-MM-DD): ")
-    project.deadline = val unless val.empty?
-
-    puts "Проєкт ID=#{id} оновлено."
-  end
-
-  def delete_project
-    id = ask("ID проєкту для видалення: ").to_i
-    if @manager.delete_project(id)
-      puts "Проєкт з ID #{id} видалено."
+    if new_data.empty?
+      puts "Змін не внесено."
     else
-      puts "Проєкт з ID #{id} не знайдено."
-    end
-  end
-
-  def find_by_title
-    query   = ask("Рядок для пошуку за назвою: ")
-    results = @manager.find_by_title(query)
-    print_results(results, "з назвою '#{query}'")
-  end
-
-  def filter_by_status
-    status  = ask("Статус (#{VALID_STATUSES.join('/')}): ")
-    results = @manager.filter_by_status(status)
-    print_results(results, "зі статусом '#{status}'")
-  end
-
-  def filter_by_tag
-    tag     = ask("Тег: ")
-    results = @manager.filter_by_tag(tag)
-    print_results(results, "з тегом '#{tag}'")
-  end
-
-  def save_to_json_explicit
-    @manager.save_to_json
-    puts "Дані збережено у projects.json."
-  end
-
-  def load_from_json_explicit
-    print "Поточні дані будуть замінені. Продовжити? (y/n): "
-    return unless gets.chomp.downcase == 'y'
-
-    if @manager.load_from_json
-      puts "Дані завантажено з projects.json."
-    else
-      puts "Файл projects.json не знайдено."
+      @manager.edit_project(id, new_data)
+      puts "Проєкт успішно оновлено!"
     end
   end
 end

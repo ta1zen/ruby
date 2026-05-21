@@ -1,5 +1,8 @@
 class Project
-  attr_accessor :title, :team, :tags, :client, :start_date, :deadline, :budget, :status
+  VALID_STATUSES = %w[planned in_progress completed cancelled].freeze
+
+  attr_accessor :title, :team, :tags, :client, :start_date, :deadline, :budget
+  attr_reader :status
 
   def initialize(title, team, tags, client, start_date, deadline, budget, status = "planned")
     @title = title
@@ -8,37 +11,55 @@ class Project
     @client = client
     @start_date = start_date
     @deadline = deadline
-    @budget = budget
-    @status = status
+    @budget = budget.to_f
+    
+    self.status = status 
+  end
+
+  def status=(new_status)
+    if VALID_STATUSES.include?(new_status)
+      @status = new_status
+    else
+      puts "[Попередження] Некоректний статус '#{new_status}'. Дозволені: #{VALID_STATUSES.join(', ')}."
+
+      @status ||= "planned"
+    end
   end
 
   def to_h
     {
-      'title' => @title,
-      'team' => @team,
-      'tags' => @tags,
-      'client' => @client,
-      'start_date' => @start_date,
-      'deadline' => @deadline,
-      'budget' => @budget,
-      'status' => @status
+      title: @title,
+      team: @team,
+      tags: @tags,
+      client: @client,
+      start_date: @start_date,
+      deadline: @deadline,
+      budget: @budget,
+      status: @status
     }
   end
 
   def self.from_h(hash)
     new(
-      hash['title'],
-      hash['team'],
-      hash['tags'],
-      hash['client'],
-      hash['start_date'],
-      hash['deadline'],
-      hash['budget'],
-      hash['status']
+      hash[:title],
+      hash[:team],
+      hash[:tags],
+      hash[:client],
+      hash[:start_date],
+      hash[:deadline],
+      hash[:budget],
+      hash[:status]
     )
   end
 
   def to_s
-    "Проєкт: '#{@title}' | Клієнт: #{@client} | Дедлайн: #{@deadline} | Статус: #{@status}"
+    <<~TEXT
+      #{@title}  |  #{@status}
+           Клієнт:   #{@client}
+           Команда:  #{@team.join(', ')}
+           Теги:     #{@tags.join(', ')}
+           Початок:  #{@start_date}   Дедлайн: #{@deadline}
+           Бюджет:   #{Kernel.format('%.2f', @budget)} грн
+    TEXT
   end
 end
