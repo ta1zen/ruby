@@ -1,4 +1,3 @@
-# Dockerfile для розробки (development) — лабораторна робота №3
 FROM ruby:3.1.2-slim
 
 RUN apt-get update -qq && \
@@ -16,7 +15,6 @@ RUN bundle install
 
 COPY . .
 
-# Підготовка БД при першому запуску контейнера
 RUN RAILS_ENV=development bundle exec rails db:prepare
 
 EXPOSE 3000
