@@ -6,6 +6,5 @@ class Project < ApplicationRecord
 
   scope :active,       -> { where(status: :in_progress) }
   scope :done,         -> { where(status: :completed) }
-  scope :big_budget,   -> { where(budget: 50_000..) }
   scope :deadline_soon, -> { where(deadline: Date.current..7.days.from_now) }
 end
