@@ -40,7 +40,6 @@ class TeamMembersController < ApplicationController
     @team_member = TeamMember.find(params[:id])
   end
 
-  # Strong parameters для TeamMember
   def team_member_params
     params.require(:team_member).permit(:name, :role)
   end
