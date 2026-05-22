@@ -22,10 +22,8 @@
           <td><%= link_to project.title, project %></td>
           <td><%= project.client %></td>
           <td><%= project.category %></td>
-          <%# deadline_badge — хелпер із ProjectsHelper %>
           <td><%= deadline_badge(project) %></td>
           <td><%= number_to_currency(project.budget, unit: 'грн', format: '%n %u') %></td>
-          <%# status_badge — хелпер із ProjectsHelper %>
           <td><%= status_badge(project) %></td>
           <td>
             <%= link_to 'Редагувати', edit_project_path(project), class: 'btn btn-sm btn-outline-secondary' %>
