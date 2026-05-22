@@ -1,4 +1,3 @@
-<%# Partial форми — використовується у new.html.erb та edit.html.erb %>
 <%= form_with(model: project, class: 'needs-validation', novalidate: true) do |f| %>
   <% if project.errors.any? %>
     <div class="alert alert-danger">
@@ -19,7 +18,6 @@
 
   <div class="mb-3">
     <%= f.label :category, 'Категорія', class: 'form-label' %>
-    <%# Випадаючий список з існуючих категорій через pluck %>
     <%= f.select :category, Category.pluck(:name),
                  { include_blank: '— Оберіть категорію —' },
                  class: 'form-select' %>
@@ -57,7 +55,6 @@
 
   <div class="mb-3">
     <%= f.label :status, 'Статус', class: 'form-label' %>
-    <%# Enum-ключі з моделі %>
     <%= f.select :status, Project.statuses.keys, {}, class: 'form-select' %>
   </div>
 

@@ -35,7 +35,6 @@ class ProjectsController < ApplicationController
     redirect_to projects_path, notice: t('projects.destroyed')
   end
 
-  # Кастомна дія — активні проєкти, відсортовані за дедлайном
   def in_progress
     @projects = Project.in_progress.order(deadline: :asc)
   end
@@ -46,7 +45,6 @@ class ProjectsController < ApplicationController
     @project = Project.find(params[:id])
   end
 
-  # Strong parameters
   def project_params
     params.require(:project).permit(:title, :category, :main_tag, :client,
                                     :start_date, :deadline, :budget, :status)

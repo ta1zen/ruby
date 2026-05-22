@@ -24,14 +24,12 @@
       <dd class="col-sm-9"><%= @project.start_date %></dd>
 
       <dt class="col-sm-3">Дедлайн</dt>
-      <%# deadline_badge — хелпер із ProjectsHelper %>
       <dd class="col-sm-9"><%= deadline_badge(@project) %></dd>
 
       <dt class="col-sm-3">Бюджет</dt>
       <dd class="col-sm-9"><%= number_to_currency(@project.budget, unit: 'грн', format: '%n %u') %></dd>
 
       <dt class="col-sm-3">Статус</dt>
-      <%# status_badge — хелпер із ProjectsHelper %>
       <dd class="col-sm-9"><%= status_badge(@project) %></dd>
     </dl>
   </div>
